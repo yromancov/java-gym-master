@@ -85,10 +85,17 @@ public class TimetableTest {
     void testGetCountByCoaches(){
         Timetable timetable = new Timetable();
         Group group = new Group("Акробатика для детей", Age.CHILD, 60);
+        Group group2 = new Group("Кросфит", Age.ADULT, 60);
         Coach coach = new Coach("Васильев", "Николай", "Сергеевич");
         TrainingSession singleTrainingSession = new TrainingSession(group, coach, DayOfWeek.MONDAY, new TimeOfDay(13, 0));
+        TrainingSession singleTrainingSession1 = new TrainingSession(group2, coach, DayOfWeek.MONDAY, new TimeOfDay(15, 0));
         timetable.addNewTrainingSession(singleTrainingSession);
+        timetable.addNewTrainingSession(singleTrainingSession1);
         TreeMap<TimeOfDay, List<TrainingSession>> monday = timetable.getTrainingSessionsForDay(DayOfWeek.MONDAY);
+        LinkedHashMap<Coach,Integer> coachday = timetable.getCountByCoaches();
+        Assertions.assertEquals(1,coachday.size());
+        Assertions.assertTrue(coachday.containsValue(2));
+        Assertions.assertTrue(coachday.containsKey(coach));
 
 
     }
