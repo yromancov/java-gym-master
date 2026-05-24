@@ -2,6 +2,7 @@ package ru.yandex.practicum.gym;
 
 import javax.sql.rowset.spi.TransactionalWriter;
 import java.util.*;
+import java.util.Map.Entry;
 
 public class Timetable {
 
@@ -22,7 +23,7 @@ public class Timetable {
         }
 
         TreeMap<TimeOfDay, List<TrainingSession>> todayGym = timetable.get(day);
-        if(!todayGym.containsKey(time)){
+        if (!todayGym.containsKey(time)) {
             todayGym.put(time, new ArrayList<>());
         }
         List<TrainingSession> sessions = todayGym.get(time);
@@ -33,7 +34,7 @@ public class Timetable {
 
     public TreeMap<TimeOfDay, List<TrainingSession>> getTrainingSessionsForDay(DayOfWeek dayOfWeek) {
         //как реализовать, тоже непонятно, но сложность должна быть О(1)
-        if (timetable.containsKey(dayOfWeek)){
+        if (timetable.containsKey(dayOfWeek)) {
             return timetable.get(dayOfWeek);
         }
         return new TreeMap<>();
@@ -41,28 +42,47 @@ public class Timetable {
 
     public List<TrainingSession> getTrainingSessionsForDayAndTime(DayOfWeek dayOfWeek, TimeOfDay timeOfDay) {
         //как реализовать, тоже непонятно, но сложность должна быть О(1)
-        if (!timetable.containsKey(dayOfWeek)){
+        if (!timetable.containsKey(dayOfWeek)) {
             return new ArrayList<>();
         }
         TreeMap<TimeOfDay, List<TrainingSession>> todayGym = timetable.get(dayOfWeek);
-        if (!todayGym.containsKey(timeOfDay)){
+        if (!todayGym.containsKey(timeOfDay)) {
             return new ArrayList<>();
         }
         return todayGym.get(timeOfDay);
     }
-    public LinkedHashMap<Coach,Integer> getCountByCoaches(){
-        Map<Coach,Integer> couchCount = new HashMap<>();
-        for (TreeMap<TimeOfDay, List<TrainingSession>> todayGym : timetable.values()){
-            for (List<TrainingSession> sessions : todayGym.values()){
-                for (TrainingSession trainingSession : sessions){
+
+    public LinkedHashMap<Coach, Integer> getCountByCoaches() {
+        Map<Coach, Integer> coachCount = new HashMap<>();
+        for (TreeMap<TimeOfDay, List<TrainingSession>> todayGym : timetable.values()) {
+            for (List<TrainingSession> sessions : todayGym.values()) {
+                for (TrainingSession trainingSession : sessions) {
                     Coach coach = trainingSession.getCoach();
-                    if (couchCount.containsKey(coach)){
-                        couchCount.put(coach,couchCount.get(coach)+1);
-                    }
-                    else couchCount.put(coach,1);
+                    if (coachCount.containsKey(coach)) {
+                        coachCount.put(coach, coachCount.get(coach) + 1);
+                    } else coachCount.put(coach, 1);
                 }
             }
         }
+        List<Map.Entry<Coach, Integer>> coaches = new ArrayList<>(coachCount.entrySet());
+        Collections.sort(coaches,
+                new Comparator<Map.Entry<Coach, Integer>>() {
 
+                    @Override
+                    public int compare(Map.Entry<Coach, Integer> c1,
+                                       Map.Entry<Coach, Integer> c2) {
+
+                        return c2.getValue() - c1.getValue();
+                    }
+                });
+        LinkedHashMap<Coach, Integer> result =
+                new LinkedHashMap<>();
+
+        for (Map.Entry<Coach, Integer> entry : coaches) {
+
+            result.put(entry.getKey(), entry.getValue());
+        }
+
+        return result;
     }
 }
