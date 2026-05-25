@@ -13,8 +13,6 @@ public class Timetable {
     public void addNewTrainingSession(TrainingSession trainingSession) {
         //сохраняем занятие в расписании
         if (trainingSession == null || trainingSession.getDayOfWeek() == null || trainingSession.getTimeOfDay() == null) {
-
-            
             return;
         }
         DayOfWeek day = trainingSession.getDayOfWeek();
